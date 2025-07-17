@@ -1,10 +1,12 @@
 import requests
-
-TOGETHER_API_KEY = "40d36445931fab9f677f54806be9e97660d64101c870b5fe8b8f1a801b79703b"
+import os
+from dotenv import load_dotenv
+load_dotenv()
+key = os.getenv("TOGETHER_API_KEY")
 TOGETHER_API_URL = "https://api.together.xyz/v1/chat/completions"
 
 HEADERS = {
-    "Authorization": f"Bearer {TOGETHER_API_KEY}",
+    "Authorization": f"Bearer {key}",
     "Content-Type": "application/json"
 }
 
