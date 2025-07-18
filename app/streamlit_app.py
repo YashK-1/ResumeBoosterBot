@@ -3,6 +3,7 @@ from tools import (
     extract_resume_text_tool,
     boost_resume_text_tool,
     generate_docx_tool,
+    refine_resume_with_feedback_tool
 )
 
 st.set_page_config(page_title="AI Resume Booster", layout="centered")
@@ -51,3 +52,14 @@ if st.session_state.boosted_resume:
                 )
         else:
             st.error("⚠️ Failed to generate downloadable DOCX.")
+
+st.subheader("🔄 Want to improve this further?")
+user_feedback = st.text_input("Describe what you'd like to change or improve:")
+
+if user_feedback:
+    if st.button("Refine Resume"):
+        with st.spinner("Refining your resume based on feedback..."):
+            refined_resume = refine_resume_with_feedback_tool(resume_text, user_feedback)
+            st.session_state["resume_text"] = refined_resume  # Optional: update session
+            st.success("Here is your refined resume:")
+            st.text_area("Refined Resume", refined_resume, height=600)

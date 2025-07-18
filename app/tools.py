@@ -63,3 +63,23 @@ def generate_docx_tool(boosted_resume_text: str):
             return tmp.name  # Return path to the saved .docx file
     except Exception as e:
         return f"❌ Error generating DOCX: {e}"
+
+
+# Tool 4: Refine resume based on user feedback
+def refine_resume_with_feedback_tool(current_resume: str, user_feedback: str):
+    """
+    Refines the current resume based on specific user feedback.
+    """
+    feedback_prompt = f"""
+You are an expert resume editor. Here is a resume that needs refinement based on the following feedback: "{user_feedback}".
+
+Resume:
+{current_resume}
+
+Please return the revised resume in clean, professional format. Do not add extra explanation or markdown.
+    """
+    try:
+        improved_resume = query_api_provider(feedback_prompt)
+        return improved_resume.strip()
+    except Exception as e:
+        return f"Error during feedback refinement: {e}"
