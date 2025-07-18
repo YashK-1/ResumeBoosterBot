@@ -1,6 +1,8 @@
 from together_llm import query_api_provider
 from docx import Document 
 
+# Do NOT name any file in your project 'docx.py' or 'exceptions.py' to avoid import conflicts with python-docx.
+
 def suggest_resume_boost(resume_text, job_title):
     prompt = f"""
     You are a resume optimization assistant. Improve the following resume for the job title '{job_title}'.

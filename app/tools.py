@@ -1,25 +1,24 @@
 from pdf_parser import extract_text_from_pdf
-from resume_utils import write_resume_to_docx
 from together_llm import query_api_provider
+from resume_utils import write_resume_to_docx
 import tempfile
 
 # Tool 1: Extract resume text from uploaded PDF file
 def extract_resume_text_tool(uploaded_file):
     """
-    Extracts raw text from the uploaded resume PDF file.
+    Extracts raw text from the uploaded resume PDF.
     """
     try:
         contents = uploaded_file.read()
         extracted_text = extract_text_from_pdf(contents)
         return extracted_text
     except Exception as e:
-        return f"Error extracting text: {e}"
+        return f"❌ Error extracting text: {e}"
 
-
-# Tool 2: Enhance the resume using Hugging Face (or Together.ai)
+# Tool 2: Enhance the resume using the AI provider
 def boost_resume_text_tool(resume_text: str, job_title: str):
     """
-    Boosts or rewrites the resume text using LLM for the specified job title.
+    Boosts the resume using AI by providing an optimized version based on job title.
     """
     prompt = f"""
 You are a professional resume optimization assistant. Rewrite and improve the resume text provided below, tailoring it for the job title: "{job_title}".
@@ -45,14 +44,13 @@ Resume Guidelines:
 
 Resume Text:
 {resume_text}
-    """
+"""
 
     try:
         improved_resume = query_api_provider(prompt)
         return improved_resume.strip()
     except Exception as e:
-        return f"Error from API Provider: {e}"
-
+        return f"❌ Error from AI API: {e}"
 
 # Tool 3: Generate .docx from improved resume
 def generate_docx_tool(boosted_resume_text: str):
@@ -62,6 +60,6 @@ def generate_docx_tool(boosted_resume_text: str):
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp:
             write_resume_to_docx(boosted_resume_text, tmp.name)
-            return tmp.name
+            return tmp.name  # Return path to the saved .docx file
     except Exception as e:
-        return f"Error generating DOCX: {e}"
+        return f"❌ Error generating DOCX: {e}"
