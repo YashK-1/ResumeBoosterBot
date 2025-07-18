@@ -9,7 +9,8 @@ def extract_resume_text_tool(uploaded_file):
     Extracts raw text from the uploaded resume PDF.
     """
     try:
-        contents = uploaded_file.read()
+        # If uploaded_file is bytes, use it directly; otherwise, read its contents
+        contents = uploaded_file if isinstance(uploaded_file, bytes) else uploaded_file.read()
         extracted_text = extract_text_from_pdf(contents)
         return extracted_text
     except Exception as e:
