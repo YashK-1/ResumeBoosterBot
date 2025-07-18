@@ -1,36 +1,55 @@
+# streamlit_app.py
+
 import streamlit as st
-from together_llm import query_together
-from PyPDF2 import PdfReader
+from tools import (
+    extract_resume_text_tool,
+    boost_resume_text_tool,
+    generate_docx_tool,
+)
 
-# Page settings
-st.set_page_config(page_title="Resume Booster Bot", layout="wide")
+st.set_page_config(page_title="AI Resume Booster", layout="centered")
+st.title("🚀 AI Resume Booster")
 
-st.title("🚀 Resume Booster Bot")
-st.markdown("Upload your resume and get an AI-optimized version tailored to a job title.")
+# Step 1: Upload resume PDF
+uploaded_file = st.file_uploader("📄 Upload your resume (PDF)", type=["pdf"])
 
-# Upload Resume
-uploaded_file = st.file_uploader("Upload your resume (PDF)", type=["pdf"])
-job_title = st.text_input("Enter Job Title")
+# Step 2: Enter job title
+job_title = st.text_input("💼 Enter the job title you're targeting:")
+
+# Initialize session state
+if "resume_text" not in st.session_state:
+    st.session_state.resume_text = ""
+
+if "boosted_resume" not in st.session_state:
+    st.session_state.boosted_resume = ""
 
 if uploaded_file and job_title:
-    # Extract text
-    reader = PdfReader(uploaded_file)
-    resume_text = ""
-    for page in reader.pages:
-        resume_text += page.extract_text()
+    if st.button("🔍 Analyze and Boost Resume"):
+        with st.spinner("Extracting text from PDF..."):
+            resume_text = extract_resume_text_tool(uploaded_file)
+            st.session_state.resume_text = resume_text
 
-    if st.button("Boost Resume"):
-        with st.spinner("Enhancing your resume with Together.ai..."):
-            prompt = f"""
-            You are a resume optimization assistant. Improve the following resume text for the job title '{job_title}'.
-            Make it more impactful, highlight relevant skills, and make it ATS-friendly.
+        with st.spinner("Enhancing resume using AI..."):
+            improved_resume = boost_resume_text_tool(
+                st.session_state.resume_text, job_title
+            )
+            st.session_state.boosted_resume = improved_resume
 
-            Resume:
-            {resume_text}
-            """
-            try:
-                boosted = query_together(prompt)
-                st.subheader("🔍 Optimized Resume")
-                st.markdown(boosted.replace('\n', '  \n'))  # For line breaks in markdown
-            except Exception as e:
-                st.error(f"Something went wrong: {str(e)}")
+# Display extracted and improved resume
+if st.session_state.boosted_resume:
+    st.subheader("✅ Improved Resume")
+    st.text_area("📄 Boosted Resume Content", st.session_state.boosted_resume, height=400)
+
+    # Generate download link for .docx
+    with st.spinner("Generating Word document..."):
+        docx_path = generate_docx_tool(st.session_state.boosted_resume)
+        if isinstance(docx_path, str) and docx_path.endswith(".docx"):
+            with open(docx_path, "rb") as f:
+                st.download_button(
+                    label="⬇️ Download Improved Resume (.docx)",
+                    data=f,
+                    file_name="Improved_Resume.docx",
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                )
+        else:
+            st.error("⚠️ Failed to generate downloadable DOCX.")

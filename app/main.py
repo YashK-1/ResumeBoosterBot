@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from typing import List
 import os
-
+from docx import Document
 from .pdf_parser import extract_text_from_pdf
 from .resume_analyzer import analyze_resume
 from .together_llm import query_together

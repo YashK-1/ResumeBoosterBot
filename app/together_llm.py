@@ -2,41 +2,40 @@ import requests
 import os
 import streamlit as st
 from dotenv import load_dotenv
-"""from dotenv import load_dotenv
-load_dotenv()
-key = os.getenv("TOGETHER_API_KEY")"""
-# TOGETHER_API_KEY = st.secrets["TOGETHER_API_KEY"]
-load_dotenv()
 
-TOGETHER_API_KEY = st.secrets.get("TOGETHER_API_KEY", os.getenv("TOGETHER_API_KEY"))
-TOGETHER_API_URL = "https://api.together.xyz/v1/chat/completions"
+# Load from .env OR Streamlit secrets
+load_dotenv()
+HF_API_KEY = st.secrets.get("HF_API_KEY", os.getenv("HF_API_KEY"))
+
+HF_URL = "https://api-inference.huggingface.co/models/google/flan-t5-xl"
 
 HEADERS = {
-    "Authorization": f"Bearer {TOGETHER_API_KEY}",
+    "Authorization": f"Bearer {HF_API_KEY}",
     "Content-Type": "application/json"
 }
 
-def query_together(prompt: str) -> str:
+def query_api_provider(prompt: str) -> str:
     payload = {
-        "model": "meta-llama/Llama-3-70b-chat-hf",
-        "messages": [
-            {"role": "system", "content": "You are a resume rewriting assistant. Improve resumes for ATS and recruiter clarity."},
-            {"role": "user", "content": prompt}
-        ],
-        "temperature": 0.7,
-        "top_p": 0.9,
-        "max_tokens": 1024,
+        "inputs": prompt,
+        "options": {
+            "wait_for_model": True
+        }
     }
 
-    response = requests.post(TOGETHER_API_URL, headers=HEADERS, json=payload)
-    
+    response = requests.post(HF_URL, headers=HEADERS, json=payload)
+
     if response.status_code != 200:
-        raise Exception(f"TogetherAI API Error: {response.status_code} - {response.text}")
-    
+        raise Exception(f"Hugging Face API Error: {response.status_code} - {response.text}")
+
     result = response.json()
-    content = result["choices"][0]["message"]["content"]
-    
+
+    if isinstance(result, list) and "generated_text" in result[0]:
+        content = result[0]["generated_text"]
+    elif isinstance(result, dict) and "error" in result:
+        raise Exception(f"❌ Hugging Face API Error: {result['error']}")
+    else:
+        raise Exception("❌ Unexpected Hugging Face API response format.")
+
     # Clean up and format
     formatted = content.strip().replace('\n\n', '\n').replace('\t', '')
     return formatted
-
