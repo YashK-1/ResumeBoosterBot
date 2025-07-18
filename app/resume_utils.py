@@ -1,4 +1,4 @@
-from .together_llm import query_together
+from together_llm import query_together
 from docx import Document 
 
 def suggest_resume_boost(resume_text, job_title):
