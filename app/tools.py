@@ -1,8 +1,7 @@
-from .pdf_parser import extract_text_from_pdf
-from .together_llm import query_api_provider
-from .resume_utils import write_resume_to_docx
+from pdf_parser import extract_text_from_pdf
+from resume_utils import write_resume_to_docx
+from together_llm import query_api_provider
 import tempfile
-
 
 # Tool 1: Extract resume text from uploaded PDF file
 def extract_resume_text_tool(uploaded_file):
