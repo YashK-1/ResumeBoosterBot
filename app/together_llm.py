@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 HF_API_KEY = st.secrets.get("HF_API_KEY", os.getenv("HF_API_KEY"))
 
-HF_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
+HF_URL = "https://api-inference.huggingface.co/models/google/flan-t5-base"
 
 HEADERS = {
     "Authorization": f"Bearer {HF_API_KEY}",
