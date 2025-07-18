@@ -1,29 +1,34 @@
-from together_llm import query_api_provider
-from docx import Document 
+from docx import Document
+from docx.shared import Pt
 
-# Do NOT name any file in your project 'docx.py' or 'exceptions.py' to avoid import conflicts with python-docx.
-
-def suggest_resume_boost(resume_text, job_title):
-    prompt = f"""
-    You are a resume optimization assistant. Improve the following resume for the job title '{job_title}'.
-
-    Resume:
-    {resume_text}
-
-    Make it more impactful, highlight relevant skills, and make it ATS-friendly.
+def write_resume_to_docx(resume_text: str, output_path: str):
     """
-    return query_api_provider(prompt)
+    Writes the improved resume text to a .docx file.
 
-def write_resume_to_docx(content, output_path="boosted_resume.docx"):
-    doc = Document()
-    doc.add_heading('Optimized Resume', 0)
+    Parameters:
+    - resume_text (str): The AI-generated or refined resume content.
+    - output_path (str): Full path to save the .docx file.
+    """
+    try:
+        # Create a new Word document
+        doc = Document()
+        style = doc.styles['Normal']
+        font = style.font
+        font.name = 'Calibri'
+        font.size = Pt(11)
 
-    for line in content.split('\n'):
-        if line.strip() == "":
-            continue
-        elif line.endswith(':'):
-            doc.add_heading(line, level=1)
-        else:
-            doc.add_paragraph(line)
+        # Split into lines and write to document
+        for line in resume_text.strip().split('\n'):
+            if line.strip() == "":
+                doc.add_paragraph("")  # Add a blank line
+            elif line.strip().endswith(":"):
+                # Section heading
+                doc.add_paragraph(line.strip(), style='Heading 2')
+            else:
+                doc.add_paragraph(line.strip())
 
-    doc.save(output_path)
+        # Save the document
+        doc.save(output_path)
+
+    except Exception as e:
+        raise RuntimeError(f"❌ Failed to write .docx: {e}")
