@@ -4,14 +4,13 @@ from resume_utils import write_resume_to_docx
 import tempfile
 
 # Tool 1: Extract resume text from uploaded PDF file
-async def extract_resume_text_tool(uploaded_file):
+def extract_resume_text_tool(uploaded_file):
     """
     Extracts raw text from the uploaded resume PDF.
     """
     try:
-        # If uploaded_file is bytes, use it directly; otherwise, read its contents asynchronously
-        contents = uploaded_file if isinstance(uploaded_file, bytes) else await uploaded_file.read()
-        extracted_text = await extract_text_from_pdf(contents)
+        contents = uploaded_file.read()  # read as bytes
+        extracted_text = extract_text_from_pdf(contents)
         return extracted_text
     except Exception as e:
         return f"❌ Error extracting text: {e}"
@@ -64,7 +63,6 @@ def generate_docx_tool(boosted_resume_text: str):
             return tmp.name  # Return path to the saved .docx file
     except Exception as e:
         return f"❌ Error generating DOCX: {e}"
-
 
 # Tool 4: Refine resume based on user feedback
 def refine_resume_with_feedback_tool(current_resume: str, user_feedback: str):
