@@ -1,4 +1,4 @@
-from together_llm import query_together
+from together_llm import query_api_provider
 from docx import Document 
 
 def suggest_resume_boost(resume_text, job_title):
@@ -10,7 +10,7 @@ def suggest_resume_boost(resume_text, job_title):
 
     Make it more impactful, highlight relevant skills, and make it ATS-friendly.
     """
-    return query_together(prompt)
+    return query_api_provider(prompt)
 
 def write_resume_to_docx(content, output_path="boosted_resume.docx"):
     doc = Document()
