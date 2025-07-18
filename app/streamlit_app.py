@@ -3,7 +3,7 @@ from tools import (
     extract_resume_text_tool,
     boost_resume_text_tool,
     generate_docx_tool,
-    refine_resume_with_feedback_tool
+    refine_resume_with_feedback_tool,
 )
 
 st.set_page_config(page_title="AI Resume Booster", layout="centered")
