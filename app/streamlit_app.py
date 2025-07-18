@@ -1,5 +1,3 @@
-# streamlit_app.py
-
 import streamlit as st
 from tools import (
     extract_resume_text_tool,
