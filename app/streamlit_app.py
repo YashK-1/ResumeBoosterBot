@@ -20,7 +20,7 @@ if uploaded_file and job_title:
     with st.spinner("Extracting resume..."):
         resume_text = extract_resume_text_tool(uploaded_file)
 
-    if "error" not in resume_text.lower():
+    if isinstance(resume_text, str) and "error" not in resume_text.lower():
         st.success("✅ Resume text extracted!")
         st.subheader("Original Resume Text")
         st.text_area("Original", resume_text, height=300)
@@ -71,4 +71,4 @@ if uploaded_file and job_title:
             else:
                 st.error(boosted_resume)
     else:
-        st.error(resume_text)
+        st.error(str(resume_text))
