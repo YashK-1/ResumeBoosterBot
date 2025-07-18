@@ -1,6 +1,6 @@
-from app.pdf_parser import extract_text_from_pdf
-from app.together_llm import query_api_provider
-from app.resume_utils import write_resume_to_docx
+from .pdf_parser import extract_text_from_pdf
+from .together_llm import query_api_provider
+from .resume_utils import write_resume_to_docx
 import tempfile
 
 
