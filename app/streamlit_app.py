@@ -19,6 +19,9 @@ job_title = st.text_input("Enter the job title you're targeting")
 if uploaded_file and job_title:
     with st.spinner("Extracting resume..."):
         resume_text = extract_resume_text_tool(uploaded_file)
+        if hasattr(resume_text, "__await__"):
+            import asyncio
+            resume_text = asyncio.run(resume_text)
 
     if isinstance(resume_text, str) and "error" not in resume_text.lower():
         st.success("✅ Resume text extracted!")
